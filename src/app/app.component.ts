@@ -1,4 +1,9 @@
-import { Component } from '@angular/core';
+import { DynamiccomponentService } from './dynamiccomponent.service';
+import { DcdDirective } from './dcd.directive';
+import { Component, NgModule, ViewChild,
+  ComponentFactoryResolver } from '@angular/core';
+
+
 
 @Component({
   selector: 'app-root',
@@ -6,5 +11,23 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'app';
+
+  @ViewChild(DcdDirective) componentHost: DcdDirective;
+
+  selectComponentName: string;
+
+  constructor(
+    private dynamicComponentService: DynamiccomponentService,
+    private componentFactoryResolver: ComponentFactoryResolver
+  ) { }
+
+  displayComponent(componentName: string) {
+    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(
+      this.dynamicComponentService.getComponent(componentName));
+
+    const viewContainerRef = this.componentHost.viewContainerRef;
+
+    viewContainerRef.clear();
+    const componentRef = viewContainerRef.createComponent(componentFactory)
+  }
 }
